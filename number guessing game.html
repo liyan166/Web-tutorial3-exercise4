@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Number Guessing Game</title>
+    <script src="randominteger.js"></script>
+</head>
+<body>
+<h1>Guess the Number!</h1>
+<p>I'm thinking of a number between 1 and 100. You have 10 turns.</p>
+<p id="output"></p>
+<input type="text" id="guessInput" placeholder="Enter your guess">
+<button onclick="checkGuess()">Guess</button>
+<button onclick="startGame()">Restart</button>
+
+<script>
+    var secretNumber;
+    var turnsLeft;
+    var previousGuesses;
+
+    function startGame() {
+        secretNumber = randomInt();
+        turnsLeft = 10;
+        previousGuesses = [];
+        document.getElementById("output").innerHTML = "New game started! You have 10 turns.";
+        document.getElementById("guessInput").value = "";
+        document.getElementById("guessInput").disabled = false;
+    }
+
+    function checkGuess() {
+        var input = document.getElementById("guessInput");
+        var guess = parseInt(input.value, 10);
+        var output = document.getElementById("output");
+
+        if (isNaN(guess) || guess < 1 || guess > 100) {
+            output.innerHTML = "Please enter a valid number between 1 and 100.";
+            return;
+        }
+
+        if (previousGuesses.indexOf(guess) !== -1) {
+            output.innerHTML = "You already guessed " + guess + ". Try a different number.";
+            return;
+        }
+
+        previousGuesses.push(guess);
+        turnsLeft--;
+
+        if (guess === secretNumber) {
+            output.innerHTML = "<strong>Correct!</strong> You guessed the number " +
+                secretNumber + " with " + turnsLeft + " turns remaining.<br>" +
+                "Previous guesses: " + previousGuesses.join(", ");
+            input.disabled = true;
+            return;
+        }
+
+        var hint = (guess < secretNumber) ? "too low" : "too high";
+        var message = "Wrong! Your guess of " + guess + " is " + hint + ".<br>" +
+            "Previous guesses: " + previousGuesses.join(", ");
+
+        if (turnsLeft === 0) {
+            message += "<br><strong>Game over!</strong> The number was " +
+                secretNumber + ".<br>Click Restart to play again.";
+            input.disabled = true;
+        }
+
+        output.innerHTML = message;
+        input.value = "";
+        input.focus();
+    }
+
+    window.onload = startGame;
+</script>
+</body>
+</html>
